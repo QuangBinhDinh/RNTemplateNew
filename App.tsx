@@ -18,6 +18,9 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 import AddressIcon from '@svg/AddressIcon.svg';
 import AddressBook from '@svg/AddressBook.svg';
+import FancyButton from '@components/FancyButton';
+import 'react-native-gesture-handler';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 type SectionProps = PropsWithChildren<{
     title: string;
@@ -59,7 +62,7 @@ function App(): JSX.Element {
     };
 
     return (
-        <SafeAreaView style={backgroundStyle}>
+        <GestureHandlerRootView style={{ flex: 1, backgroundColor: 'white' }}>
             <StatusBar
                 barStyle={isDarkMode ? 'light-content' : 'dark-content'}
                 backgroundColor={backgroundStyle.backgroundColor}
@@ -84,10 +87,14 @@ function App(): JSX.Element {
                     <Section title="Learn More">Read the docs to discover what to do next:</Section>
                     <AddressIcon width={40} height={40} />
                     <AddressBook width={40} height={40} />
-                    <LearnMoreLinks />
+                    <FancyButton backgroundColor="#34b0dd" style={styles.button} onPress={() => {}}>
+                        <Text style={{ fontSize: 18, color: 'white' }}>Press me</Text>
+                    </FancyButton>
+
+                    <View style={{ height: 100 }} />
                 </View>
             </ScrollView>
-        </SafeAreaView>
+        </GestureHandlerRootView>
     );
 }
 
@@ -107,6 +114,15 @@ const styles = StyleSheet.create({
     },
     highlight: {
         fontWeight: '700',
+    },
+    button: {
+        alignSelf: 'center',
+        marginTop: 50,
+        width: 350,
+        height: 54,
+        borderRadius: 50,
+        overflow: 'hidden',
+        backgroundColor: '#34b0dd',
     },
 });
 
