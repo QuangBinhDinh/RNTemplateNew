@@ -16,6 +16,8 @@ import {
     LearnMoreLinks,
     ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import AddressIcon from '@svg/AddressIcon.svg';
+import AddressBook from '@svg/AddressBook.svg';
 
 type SectionProps = PropsWithChildren<{
     title: string;
@@ -80,6 +82,8 @@ function App(): JSX.Element {
                         <DebugInstructions />
                     </Section>
                     <Section title="Learn More">Read the docs to discover what to do next:</Section>
+                    <AddressIcon width={40} height={40} />
+                    <AddressBook width={40} height={40} />
                     <LearnMoreLinks />
                 </View>
             </ScrollView>
