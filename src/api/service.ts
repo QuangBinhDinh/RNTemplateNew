@@ -1,49 +1,8 @@
-import { BaseQueryFn, createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { DOMAIN_URL, API_URL } from '@env';
+import { BaseQueryFn, createApi } from '@reduxjs/toolkit/query/react';
+import { API_URL } from '@env';
 import axios, { AxiosRequestConfig, AxiosError } from 'axios';
-import {
-    FetchArgs,
-    FetchBaseQueryArgs,
-    FetchBaseQueryError,
-    FetchBaseQueryMeta,
-} from '@reduxjs/toolkit/dist/query/fetchBaseQuery';
-import { isPlainObject } from '@reduxjs/toolkit';
 import { RootState } from '@store/store';
 
-const axiosBaseQuery =
-    (
-        { baseUrl }: { baseUrl: string } = { baseUrl: '' },
-    ): BaseQueryFn<
-        {
-            url: string;
-            method: AxiosRequestConfig['method'];
-            data?: AxiosRequestConfig['data'];
-            params?: AxiosRequestConfig['params'];
-            headers?: AxiosRequestConfig['headers'];
-        },
-        unknown,
-        unknown
-    > =>
-    async ({ url, method, data, params, headers }) => {
-        try {
-            const result = await axios({
-                url: baseUrl + url,
-                method,
-                data,
-                params,
-                headers,
-            });
-            return { data: result.data };
-        } catch (axiosError) {
-            const err = axiosError as AxiosError;
-            return {
-                error: {
-                    status: err.response?.status,
-                    data: err.response?.data || err.message,
-                },
-            };
-        }
-    };
 interface BaseQueryArgs {
     baseUrl: string;
     timeout?: number;
@@ -56,7 +15,7 @@ interface QueryArgs {
     params?: AxiosRequestConfig['params'];
     header?: AxiosRequestConfig['headers'];
 }
-const anotherBaseQuerry =
+const axiosBaseQuery =
     (args: BaseQueryArgs): BaseQueryFn<QueryArgs, unknown, unknown> =>
     async (queryArg, api) => {
         const { baseUrl, timeout, headers } = args;
@@ -98,7 +57,7 @@ const anotherBaseQuerry =
     };
 
 export const api = createApi({
-    baseQuery: anotherBaseQuerry({
+    baseQuery: axiosBaseQuery({
         baseUrl: API_URL,
         timeout: 15000,
         headers: {
