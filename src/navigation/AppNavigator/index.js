@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import CustomTabBar from './CustomTabBar';
 import { Apps, AppsFill, Bell, BellFill, Home, HomeFill, User, UserFill } from '@svg/index';
 import EmptyScreen from '../../testScreen/EmptyScreen';
+import HomeScreen from '../../moudle/home';
 
 const Tab = createBottomTabNavigator();
 const BottomTabs = () => {
@@ -24,7 +25,7 @@ const BottomTabs = () => {
                     },
                 }}
                 name="HomeScreen"
-                component={EmptyScreen}
+                component={HomeScreen}
             />
 
             <Tab.Screen
