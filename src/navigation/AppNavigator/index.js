@@ -4,6 +4,7 @@ import CustomTabBar from './CustomTabBar';
 import { Apps, AppsFill, Bell, BellFill, Home, HomeFill, User, UserFill } from '@svg/index';
 import EmptyScreen from '../../testScreen/EmptyScreen';
 import HomeScreen from '../../moudle/home';
+import ProductListScreen from '../../moudle/productList';
 
 const Tab = createBottomTabNavigator();
 const BottomTabs = () => {
@@ -37,7 +38,7 @@ const BottomTabs = () => {
                     },
                 }}
                 name="CategoryScreen"
-                component={EmptyScreen}
+                component={ProductListScreen}
             />
 
             <Tab.Screen

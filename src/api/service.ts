@@ -2,6 +2,7 @@ import { BaseQueryFn, createApi } from '@reduxjs/toolkit/query/react';
 import { API_URL } from '@env';
 import axios, { AxiosRequestConfig, AxiosError } from 'axios';
 import { RootState } from '@store/store';
+import { getVersion, isPinOrFingerprintSet } from 'react-native-device-info';
 
 interface BaseQueryArgs {
     baseUrl: string;
@@ -20,13 +21,18 @@ const axiosBaseQuery =
     async (queryArg, api) => {
         const { baseUrl, timeout, headers } = args;
         const { url, method, data, params, header } = queryArg;
-        const { getState } = api;
+        const { getState, endpoint } = api;
 
         var newHeader: AxiosRequestConfig['headers'] = headers ?? {};
         var token = (getState() as RootState).auth.token;
         if (token) newHeader['token'] = token;
         if (header) newHeader = Object.assign(newHeader, header);
-
+        console.group('SERVICE: ' + endpoint);
+        console.info('Response', {
+            url: baseUrl + url,
+            params,
+        });
+        console.groupEnd();
         try {
             const res = await axios({
                 url: baseUrl + url,
@@ -36,7 +42,9 @@ const axiosBaseQuery =
                 headers: newHeader,
                 timeout,
             });
-            console.log(res);
+
+            // console.log(res.data.result);
+
             if (res.data.status == 'successful') return { data: res.data };
             else
                 return {
@@ -61,7 +69,7 @@ export const api = createApi({
         baseUrl: API_URL,
         timeout: 15000,
         headers: {
-            'User-Agent': `printervalApp/1.5`,
+            'User-Agent': `printervalApp/${getVersion()}`,
         },
     }),
     endpoints: build => ({}),

@@ -9,7 +9,7 @@ const Stack = createStackNavigator();
 const Router = () => {
     return (
         <NavigationContainer ref={navigationRef}>
-            <Stack.Navigator>
+            <Stack.Navigator screenOptions={{ headerShown: false }}>
                 <Stack.Screen name="App" component={BottomTabs} options={{ animationEnabled: false }} />
             </Stack.Navigator>
         </NavigationContainer>
