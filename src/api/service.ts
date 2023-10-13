@@ -3,6 +3,7 @@ import { API_URL } from '@env';
 import axios, { AxiosRequestConfig, AxiosError } from 'axios';
 import { RootState } from '@store/store';
 import { getVersion, isPinOrFingerprintSet } from 'react-native-device-info';
+import { SERVICE_DEBUG } from '../constant';
 
 interface BaseQueryArgs {
     baseUrl: string;
@@ -27,24 +28,29 @@ const axiosBaseQuery =
         var token = (getState() as RootState).auth.token;
         if (token) newHeader['token'] = token;
         if (header) newHeader = Object.assign(newHeader, header);
-        console.group('SERVICE: ' + endpoint);
-        console.info('Response', {
-            url: baseUrl + url,
-            params,
-        });
-        console.groupEnd();
+
+        if (SERVICE_DEBUG.includes(endpoint)) {
+            console.group('SERVICE: ' + endpoint);
+            console.info('request', {
+                url: baseUrl + url,
+                params,
+                header: newHeader,
+            });
+            console.groupEnd();
+        }
         try {
             const res = await axios({
                 url: baseUrl + url,
-                method,
+                method: endpoint.includes('fetch') ? 'get' : method,
                 data,
                 params,
                 headers: newHeader,
                 timeout,
             });
 
-            // console.log(res.data.result);
-
+            if (SERVICE_DEBUG.includes(endpoint)) {
+                console.info('response', res.data.result);
+            }
             if (res.data.status == 'successful') return { data: res.data };
             else
                 return {
@@ -55,6 +61,7 @@ const axiosBaseQuery =
                 };
         } catch (axiosError) {
             let err = axiosError as AxiosError;
+            console.info('Axios Error', err);
             return {
                 error: {
                     status: err.response?.status,

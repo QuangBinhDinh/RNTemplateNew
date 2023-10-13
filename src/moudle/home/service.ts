@@ -9,7 +9,10 @@ const extendedApi = api.injectEndpoints({
         fetchPopularDesign: build.query<any, void>({
             query: () => ({ url: 'option?filters=key=design-box-popular-tags-data', method: 'get' }),
         }),
+        fetchCategoryBanner: build.query<any, void>({
+            query: () => ({ url: 'category/home-banner?limit=6' }),
+        }),
     }),
 });
 
-export const { useFetchHomeBannerQuery, useFetchPopularDesignQuery } = extendedApi;
+export const { useFetchHomeBannerQuery, useFetchPopularDesignQuery, useFetchCategoryBannerQuery } = extendedApi;

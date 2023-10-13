@@ -1,15 +1,22 @@
-import React from 'react';
-import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
-import { useFetchHomeBannerQuery, useFetchPopularDesignQuery } from './service';
+import React, { useState } from 'react';
+import { ActivityIndicator, Text, TouchableOpacity, View, Modal, Pressable } from 'react-native';
+import { useFetchCategoryBannerQuery, useFetchHomeBannerQuery, useFetchPopularDesignQuery } from './service';
+import ImageViewer from 'react-native-image-zoom-viewer';
+import { Icon } from '@rneui/base';
 const HomeScreen = () => {
     const banner = useFetchHomeBannerQuery();
-    const design = useFetchPopularDesignQuery();
-    const firstLoad = banner.isLoading || design.isLoading;
+    const category = useFetchCategoryBannerQuery();
 
+    const image_list = category.data?.result?.map((i: any) => ({ url: i.image_url }));
+    console.log(image_list);
+    const firstLoad = banner.isLoading || category.isLoading;
+
+    const [visible, setVisible] = useState(false);
     const reload = () => {
         banner.refetch();
-        design.refetch();
+        category.refetch();
     };
+
     return (
         <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center' }}>
             <Text style={{ color: 'black', fontSize: 20, marginTop: 100 }}>Home Content</Text>
@@ -29,6 +36,32 @@ const HomeScreen = () => {
             >
                 <Text style={{ color: 'white', fontSize: 18 }}>Refetch</Text>
             </TouchableOpacity>
+
+            <TouchableOpacity
+                style={{
+                    backgroundColor: '#ff7300',
+                    width: 240,
+                    height: 80,
+                    borderRadius: 8,
+                    marginTop: 30,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+                onPress={() => setVisible(true)}
+            >
+                <Text style={{ color: 'white', fontSize: 18 }}>Open image</Text>
+            </TouchableOpacity>
+
+            <Modal visible={visible} transparent>
+                <ImageViewer imageUrls={image_list} />
+                <Pressable
+                    style={{ position: 'absolute', top: 40, right: 15 }}
+                    hitSlop={12}
+                    onPress={() => setVisible(false)}
+                >
+                    <Icon type="antdesign" name="close" color={'white'} size={26} />
+                </Pressable>
+            </Modal>
         </View>
     );
 };
