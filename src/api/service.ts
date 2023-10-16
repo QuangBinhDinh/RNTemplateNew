@@ -12,7 +12,7 @@ interface BaseQueryArgs {
 }
 interface QueryArgs {
     url: string;
-    method: AxiosRequestConfig['method'];
+    method?: AxiosRequestConfig['method'];
     data?: AxiosRequestConfig['data'];
     params?: AxiosRequestConfig['params'];
     header?: AxiosRequestConfig['headers'];

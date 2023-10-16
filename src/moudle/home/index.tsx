@@ -8,7 +8,6 @@ const HomeScreen = () => {
     const category = useFetchCategoryBannerQuery();
 
     const image_list = category.data?.result?.map((i: any) => ({ url: i.image_url }));
-    console.log(image_list);
     const firstLoad = banner.isLoading || category.isLoading;
 
     const [visible, setVisible] = useState(false);
