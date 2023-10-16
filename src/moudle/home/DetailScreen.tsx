@@ -1,11 +1,15 @@
 import { goBack } from '@navigation/service';
 import { useRoute } from '@react-navigation/native';
 import { Icon } from '@rneui/base';
+import { cdnImage } from '@util/cdnImage';
 import { SCREEN_WIDTH } from '@util/index';
 import React from 'react';
+import { Platform } from 'react-native';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import FastImage from 'react-native-fast-image';
 import { SharedElement } from 'react-navigation-shared-element';
 
+const SharedImage = Platform.OS == 'android' ? FastImage : Image;
 const DetailScreen = () => {
     const route = useRoute();
 
@@ -15,9 +19,10 @@ const DetailScreen = () => {
                 <Icon type="ant-design" size={22} color={'black'} name="arrowleft" />
             </Pressable>
             <SharedElement id={route.params?.url}>
-                <Image
+                <SharedImage
+                    resizeMode="cover"
                     style={{ width: SCREEN_WIDTH, height: SCREEN_WIDTH, marginBottom: 80 }}
-                    source={{ uri: route.params?.url }}
+                    source={{ uri: cdnImage(route.params?.url) }}
                 />
             </SharedElement>
             <Text style={{ fontSize: 20 }}>

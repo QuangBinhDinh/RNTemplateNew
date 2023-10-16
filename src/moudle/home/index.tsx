@@ -16,6 +16,8 @@ import { Icon } from '@rneui/base';
 import { SCREEN_WIDTH } from '@util/index';
 import { SharedElement } from 'react-navigation-shared-element';
 import { navigate } from '@navigation/service';
+import FastImage from 'react-native-fast-image';
+import { cdnImage } from '@util/cdnImage';
 const HomeScreen = () => {
     const banner = useFetchHomeBannerQuery();
     const category = useFetchCategoryBannerQuery();
@@ -29,9 +31,14 @@ const HomeScreen = () => {
         category.refetch();
     };
 
+    console.log(image_list);
     return (
-        <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center' }}>
-            <ScrollView style={{ flex: 1 }} contentContainerStyle={{ alignItems: 'center' }}>
+        <View style={{ flex: 1, backgroundColor: 'white' }}>
+            <ScrollView
+                style={{ flex: 1 }}
+                contentContainerStyle={{ alignItems: 'center' }}
+                showsVerticalScrollIndicator={false}
+            >
                 <Text style={{ color: 'black', fontSize: 20, marginTop: 100 }}>Home Content</Text>
                 {firstLoad && <ActivityIndicator style={{ marginTop: 25 }} color={'#2792ce'} size={'large'} />}
 
@@ -69,7 +76,11 @@ const HomeScreen = () => {
                     {image_list?.map((item: any) => (
                         <SharedElement key={item.url} id={item.url}>
                             <Pressable style={styles.imageItem} onPress={() => navigate('Detail', { url: item.url })}>
-                                <Image source={{ uri: item.url }} style={{ width: '100%', height: '100%' }} />
+                                <FastImage
+                                    source={{ uri: cdnImage(item.url) }}
+                                    style={{ width: '100%', height: '100%' }}
+                                    resizeMode="cover"
+                                />
                             </Pressable>
                         </SharedElement>
                     ))}
@@ -94,10 +105,10 @@ export default HomeScreen;
 
 const styles = StyleSheet.create({
     imageItem: {
-        width: SCREEN_WIDTH * 0.45,
-        height: SCREEN_WIDTH * 0.45,
+        width: SCREEN_WIDTH * 0.47,
+        height: SCREEN_WIDTH * 0.47,
         marginTop: 12,
         borderRadius: 6,
-        marginLeft: 10,
+        marginLeft: SCREEN_WIDTH * 0.02,
     },
 });

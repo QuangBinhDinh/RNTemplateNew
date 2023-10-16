@@ -4,6 +4,7 @@ import { ProductFilterArgs, useFetchProductResultQuery } from './service';
 import { SCREEN_WIDTH } from '@util/index';
 import LoadMoreProd from '@components/loading/LoadMoreProd';
 import LoadListProd from '@components/loading/LoadListProd';
+import FastImage from 'react-native-fast-image';
 
 const SAMPLE_1 = {
     id: '54',
@@ -68,13 +69,12 @@ const ListProd = memo(
     forwardRef(({ data, loadMore, hasNext }: { data: any[]; loadMore: any; hasNext: boolean }, ref) => {
         const renderItem = ({ item }: { item: any }) => (
             <View style={styles.productButton}>
-                <Image style={{ width: '100%', aspectRatio: 1 }} source={{ uri: item.image_url }} />
+                <FastImage style={{ width: '100%', aspectRatio: 1 }} source={{ uri: item.image_url }} />
                 <Text style={{ fontSize: 20, color: 'red', marginTop: 10, fontWeight: '700' }}>{item.price}</Text>
             </View>
         );
         const NoMoreResult = () => <View style={{ height: 75 }}></View>;
 
-        console.log(data);
         if (!data) return null;
         return (
             <FlatList
