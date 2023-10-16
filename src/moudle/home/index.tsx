@@ -1,8 +1,21 @@
 import React, { useState } from 'react';
-import { ActivityIndicator, Text, TouchableOpacity, View, Modal, Pressable } from 'react-native';
+import {
+    ActivityIndicator,
+    Text,
+    TouchableOpacity,
+    View,
+    Modal,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Image,
+} from 'react-native';
 import { useFetchCategoryBannerQuery, useFetchHomeBannerQuery, useFetchPopularDesignQuery } from './service';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import { Icon } from '@rneui/base';
+import { SCREEN_WIDTH } from '@util/index';
+import { SharedElement } from 'react-navigation-shared-element';
+import { navigate } from '@navigation/service';
 const HomeScreen = () => {
     const banner = useFetchHomeBannerQuery();
     const category = useFetchCategoryBannerQuery();
@@ -18,38 +31,50 @@ const HomeScreen = () => {
 
     return (
         <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center' }}>
-            <Text style={{ color: 'black', fontSize: 20, marginTop: 100 }}>Home Content</Text>
-            {firstLoad && <ActivityIndicator style={{ marginTop: 25 }} color={'#2792ce'} size={'large'} />}
+            <ScrollView style={{ flex: 1 }} contentContainerStyle={{ alignItems: 'center' }}>
+                <Text style={{ color: 'black', fontSize: 20, marginTop: 100 }}>Home Content</Text>
+                {firstLoad && <ActivityIndicator style={{ marginTop: 25 }} color={'#2792ce'} size={'large'} />}
 
-            <TouchableOpacity
-                style={{
-                    backgroundColor: '#ff7300',
-                    width: 240,
-                    height: 80,
-                    borderRadius: 8,
-                    marginTop: 30,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                }}
-                onPress={reload}
-            >
-                <Text style={{ color: 'white', fontSize: 18 }}>Refetch</Text>
-            </TouchableOpacity>
+                <TouchableOpacity
+                    style={{
+                        backgroundColor: '#ff7300',
+                        width: 240,
+                        height: 0,
+                        borderRadius: 8,
+                        marginTop: 30,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}
+                    onPress={reload}
+                >
+                    <Text style={{ color: 'white', fontSize: 18 }}>Refetch</Text>
+                </TouchableOpacity>
 
-            <TouchableOpacity
-                style={{
-                    backgroundColor: '#ff7300',
-                    width: 240,
-                    height: 80,
-                    borderRadius: 8,
-                    marginTop: 30,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                }}
-                onPress={() => setVisible(true)}
-            >
-                <Text style={{ color: 'white', fontSize: 18 }}>Open image</Text>
-            </TouchableOpacity>
+                <TouchableOpacity
+                    style={{
+                        backgroundColor: '#ff7300',
+                        width: 240,
+                        height: 60,
+                        borderRadius: 8,
+                        marginTop: 30,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}
+                    onPress={() => setVisible(true)}
+                >
+                    <Text style={{ color: 'white', fontSize: 18 }}>Open image</Text>
+                </TouchableOpacity>
+
+                <View style={{ flexDirection: 'row', width: '100%', flexWrap: 'wrap' }}>
+                    {image_list?.map((item: any) => (
+                        <SharedElement key={item.url} id={item.url}>
+                            <Pressable style={styles.imageItem} onPress={() => navigate('Detail', { url: item.url })}>
+                                <Image source={{ uri: item.url }} style={{ width: '100%', height: '100%' }} />
+                            </Pressable>
+                        </SharedElement>
+                    ))}
+                </View>
+            </ScrollView>
 
             <Modal visible={visible} transparent>
                 <ImageViewer imageUrls={image_list} />
@@ -66,3 +91,13 @@ const HomeScreen = () => {
 };
 
 export default HomeScreen;
+
+const styles = StyleSheet.create({
+    imageItem: {
+        width: SCREEN_WIDTH * 0.45,
+        height: SCREEN_WIDTH * 0.45,
+        marginTop: 12,
+        borderRadius: 6,
+        marginLeft: 10,
+    },
+});
