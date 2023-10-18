@@ -3,7 +3,7 @@ import { API_URL } from '@env';
 import axios, { AxiosRequestConfig, AxiosError } from 'axios';
 import { RootState } from '@store/store';
 import { getVersion, isPinOrFingerprintSet } from 'react-native-device-info';
-import { SERVICE_DEBUG } from '../constant';
+import { SERVICE_DEBUG } from './constant';
 
 interface BaseQueryArgs {
     baseUrl: string;

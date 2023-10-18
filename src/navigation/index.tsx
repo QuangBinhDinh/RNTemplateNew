@@ -4,7 +4,7 @@ import React, { memo } from 'react';
 import BottomTabs from './AppNavigator';
 import { navigationRef } from './service';
 import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
-import DetailScreen from '../moudle/home/DetailScreen';
+import DetailScreen from '../moudle/test/DetailScreen';
 const Stack = createSharedElementStackNavigator();
 
 const Router = () => {
