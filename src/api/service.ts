@@ -1,5 +1,5 @@
 import { BaseQueryFn, createApi } from '@reduxjs/toolkit/query/react';
-import { API_URL } from '@env';
+import { API_URL, DOMAIN_URL } from '@env';
 import axios, { AxiosRequestConfig, AxiosError } from 'axios';
 import { RootState } from '@store/store';
 import { getVersion, isPinOrFingerprintSet } from 'react-native-device-info';
@@ -74,6 +74,17 @@ const axiosBaseQuery =
 export const api = createApi({
     baseQuery: axiosBaseQuery({
         baseUrl: API_URL,
+        timeout: 15000,
+        headers: {
+            'User-Agent': `printervalApp/${getVersion()}`,
+        },
+    }),
+    endpoints: build => ({}),
+});
+
+export const domainApi = createApi({
+    baseQuery: axiosBaseQuery({
+        baseUrl: DOMAIN_URL,
         timeout: 15000,
         headers: {
             'User-Agent': `printervalApp/${getVersion()}`,
