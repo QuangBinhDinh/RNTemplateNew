@@ -25,7 +25,6 @@
       "@type/*": ["./src/type/*"],
       
       "@animation/*": ["./src/assets/animation/*"],
-      "@banner/*": ["./src/assets/banner/*"],
       "@image/*": ["./src/assets/image/*"],
       "@svg/*": ["./src/assets/svg/*"],
      
