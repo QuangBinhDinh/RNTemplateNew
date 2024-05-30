@@ -1,6 +1,6 @@
 import { SCREEN_WIDTH } from '@util/index';
 import React from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -65,3 +65,24 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
 };
 
 export default CustomTabBar;
+
+const style = StyleSheet.create({
+    containerRow: {
+        marginLeft: 0,
+        marginTop: 0,
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 1,
+    },
+    viewRound: {
+        marginLeft: 0,
+        width: 30,
+        height: 30,
+        backgroundColor: 'green',
+        borderRadius: 15,
+    },
+    textLabel: {
+        marginLeft: 30,
+        fontSize: 15,
+    },
+});

@@ -4,7 +4,8 @@ import React, { memo } from 'react';
 import BottomTabs from './AppNavigator';
 import { navigationRef } from './service';
 import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
-import DetailScreen from '../moudle/test/DetailScreen';
+import DetailScreen from '../module/test/DetailScreen';
+import ProductDetailScreen from '../module/product';
 const Stack = createSharedElementStackNavigator();
 
 const Router = () => {
@@ -33,6 +34,7 @@ const Router = () => {
                     }}
                 />
                 <Stack.Screen name="Detail2" component={DetailScreen} />
+                <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
             </Stack.Navigator>
         </NavigationContainer>
     );

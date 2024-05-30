@@ -2,9 +2,9 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import CustomTabBar from './CustomTabBar';
 import { Apps, AppsFill, Bell, BellFill, Home, HomeFill, User, UserFill } from '@svg/index';
-import EmptyScreen from '../../moudle/test/EmptyScreen';
-import HomeScreen from '../../moudle/home';
-import ProductListScreen from '../../moudle/productList';
+import EmptyScreen from '../../module/test/EmptyScreen';
+import HomeScreen from '../../module/home';
+import ProductListScreen from '../../module/productList';
 
 const Tab = createBottomTabNavigator();
 const BottomTabs = () => {
@@ -15,7 +15,7 @@ const BottomTabs = () => {
                 lazy: false,
             }}
             tabBar={props => <CustomTabBar {...props} />}
-            initialRouteName="HomeScreen"
+            //initialRouteName="HomeScreen"
         >
             <Tab.Screen
                 options={{
