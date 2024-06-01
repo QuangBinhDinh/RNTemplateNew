@@ -13,7 +13,7 @@ const ProductDetailScreen = ({ route }: { route: any }) => {
     useEffect(() => {}, []);
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
-            <View style={styles.containerTitle}>
+            <View style={styles.headerTitle}>
                 <Pressable style={styles.backButton} hitSlop={10} onPress={goBack}>
                     <Icon type="ant-design" name="back" size={24} />
                 </Pressable>
@@ -29,7 +29,7 @@ const ProductDetailScreen = ({ route }: { route: any }) => {
 export default ProductDetailScreen;
 
 const styles = StyleSheet.create({
-    containerTitle: {
+    headerTitle: {
         height: 64,
         width: '100%',
         flexDirection: 'row',
