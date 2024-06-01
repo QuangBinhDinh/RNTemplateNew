@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios';
 import { API_URL, DOMAIN_URL, API_TEST, DOMAIN_TEST } from '@env';
 import { getVersion } from 'react-native-device-info';
-import { ERROR_CODE } from './constant';
+import { ERROR_CODE } from '../constant';
 
 export type BaseError = {
     error_code: number;
@@ -28,7 +28,7 @@ api.interceptors.response.use(
         return response;
     },
     async axiosError => {
-        return Promise.reject(buildErrorCode(axiosError));
+        return Promise.reject<BaseError>(buildErrorCode(axiosError));
     },
 );
 
@@ -52,7 +52,7 @@ domainApi.interceptors.response.use(
         return response;
     },
     async axiosError => {
-        return Promise.reject(buildErrorCode(axiosError));
+        return Promise.reject<BaseError>(buildErrorCode(axiosError));
     },
 );
 
@@ -73,6 +73,7 @@ export const buildErrorCode = (axiosError: any): BaseError => {
         }
         if (err.message.includes('Network Error')) code = ERROR_CODE.NO_NETWORK;
         else if (err.message.includes('timeout')) code = ERROR_CODE.TIME_OUT;
+        else if (err.message.includes('canceled')) code = ERROR_CODE.CANCELED;
     }
     return {
         error_code: code,
@@ -81,7 +82,7 @@ export const buildErrorCode = (axiosError: any): BaseError => {
 };
 
 /**
- * Handle error response của Printerval, trả về 1 message duy nhất
+ * Handle error response, trả về 1 message duy nhất
  *
  * Có thể còn nhiều case khác nữa
  * @param err

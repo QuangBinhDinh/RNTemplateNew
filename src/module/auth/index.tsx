@@ -1,6 +1,6 @@
 import { TextSemiBold } from '@components/text';
 import { useAppDispatch, useAppSelector } from '@store/hook';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { getProductsFilterBy, userLogin } from './service';
 import auth from './reducer';
@@ -8,11 +8,14 @@ import { Icon } from '@rneui/base';
 import { goBack } from '@navigation/service';
 import { showMessage } from '@components/popup/BottomMessage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useAbortController } from '@api/axios/abort';
 
 const LoginScreen = () => {
     const insets = useSafeAreaInsets();
     const { userInfo, logged, error_msg } = useAppSelector(state => state.auth);
     const dispatch = useAppDispatch();
+
+    let promiseDispatch: any;
 
     const loginAction = async () => {
         const loginArgs = {
@@ -24,7 +27,6 @@ const LoginScreen = () => {
         };
         try {
             const res = await dispatch(userLogin({ body: loginArgs })).unwrap();
-            console.log(res);
             showMessage('Login success');
         } catch (e) {
             console.log(e);
@@ -44,15 +46,15 @@ const LoginScreen = () => {
             page_size: 40,
             page_type: 'category',
         };
-
         try {
             const res = await dispatch(getProductsFilterBy(productFilterArgs)).unwrap();
-
+            console.log(res);
             showMessage('Get products success');
         } catch (e) {
             console.log(e);
         }
     };
+    useAbortController();
 
     return (
         <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', paddingTop: insets.top / 1.5 }}>

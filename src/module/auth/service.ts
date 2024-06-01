@@ -52,7 +52,7 @@ const getProductsFilterBy = createGetThunk<Partial<ProductFilterArgs>, ProductRe
     'mobile/product/category-filter',
     'domainApi',
     res => ({
-        result: res.res,
+        result: res.result,
         categories: res.categories,
     }),
 );

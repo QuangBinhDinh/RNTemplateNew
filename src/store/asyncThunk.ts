@@ -4,7 +4,7 @@ import { API_URL, DOMAIN_URL } from '@env';
 import { ERROR_CODE, SERVICE_DEBUG } from '@api/constant';
 import { getErrorMessage } from '@api/base';
 import { BaseError, api, domainApi } from '@api/axios';
-import { showLoading } from '@components/loading/LoadingSpinner';
+import { createSignal, removeSignal } from '@api/axios/abort';
 
 type AsyncThunkConfig = {
     /** return type for `thunkApi.getState` */
@@ -38,13 +38,6 @@ type PostData<TParam, TBody> = {
     body?: TBody;
 };
 
-type RequestLog = {
-    url_prefix: string;
-    url_suffix: string;
-    headers?: string;
-    body: string;
-};
-
 /**
  * Async thunk for GET request
  * @param type Action name of this thunk
@@ -68,17 +61,17 @@ const createGetThunk = <Params, Response = unknown>(
             const headers = { ...header, ...(!!token && { token }) };
             const service = domain == 'api' ? api : domainApi;
 
+            const signal_name = `${type}_${Date.now}`;
+            const signal = createSignal(signal_name);
             thunkLogger(type, {
                 url: `${domain == 'api' ? API_URL : DOMAIN_URL}${url}`,
                 params,
                 headers,
             });
-            showLoading(true); // show loading indicator
             try {
-                const res = await service.get(url, { params, headers });
-                showLoading(false);
+                const res = await service.get(url, { params, headers, signal });
                 thunkLogger(type, res, 'response');
-
+                removeSignal(signal_name);
                 if (res.data.status == 'successful') {
                     return transformResponse(res.data);
                 }
@@ -87,9 +80,10 @@ const createGetThunk = <Params, Response = unknown>(
                     error_msg: getErrorMessage(res.data),
                 });
             } catch (e) {
-                showLoading(false);
-                thunkLogger(type, e, 'error');
-                return rejectWithValue(e as BaseError);
+                var error = e as BaseError;
+                thunkLogger(type, error, 'error');
+                removeSignal(signal_name);
+                return rejectWithValue(error);
             }
         },
     );
@@ -119,17 +113,19 @@ const createPostThunk = <TParam, TBody, Response = unknown>(
             const headers = { ...header, ...(!!token && { token }) };
             const service = domain == 'api' ? api : domainApi;
 
+            const signal_name = `${type}_${Date.now}`;
+            const signal = createSignal(signal_name);
             thunkLogger(type, {
                 url: `${domain == 'api' ? API_URL : DOMAIN_URL}${url}`,
                 params,
                 headers,
                 body,
             });
-            showLoading(true);
+
             try {
-                const res = await service.post(url, body, { params, headers });
-                showLoading(false);
+                const res = await service.post(url, body, { params, headers, signal });
                 thunkLogger(type, res, 'response');
+                removeSignal(signal_name);
 
                 if (res.data.status == 'successful') return transformResponse(res.data);
                 return rejectWithValue({
@@ -137,9 +133,10 @@ const createPostThunk = <TParam, TBody, Response = unknown>(
                     error_msg: getErrorMessage(res.data),
                 });
             } catch (e) {
-                showLoading(false);
-                thunkLogger(type, e, 'error');
-                return rejectWithValue(e as BaseError);
+                var error = e as BaseError;
+                thunkLogger(type, error, 'error');
+                removeSignal(signal_name);
+                return rejectWithValue(error);
             }
         },
     );
