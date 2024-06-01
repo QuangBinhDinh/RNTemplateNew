@@ -1,8 +1,7 @@
 import { Dispatch, createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from './store';
-import { API_URL } from '@env';
-import axios from 'axios';
-import { ERROR_CODE } from '@api/constant';
+import { API_URL, DOMAIN_URL } from '@env';
+import { ERROR_CODE, SERVICE_DEBUG } from '@api/constant';
 import { getErrorMessage } from '@api/base';
 import { BaseError, api, domainApi } from '@api/axios';
 import { showLoading } from '@components/loading/LoadingSpinner';
@@ -39,6 +38,13 @@ type PostData<TParam, TBody> = {
     body?: TBody;
 };
 
+type RequestLog = {
+    url_prefix: string;
+    url_suffix: string;
+    headers?: string;
+    body: string;
+};
+
 /**
  * Async thunk for GET request
  * @param type Action name of this thunk
@@ -51,8 +57,8 @@ type PostData<TParam, TBody> = {
 const createGetThunk = <Params, Response = unknown>(
     type: string,
     url: string,
-    transformResponse: (res: BaseResponse) => Response | Partial<BaseResponse> = res => res,
     domain: 'api' | 'domainApi' = 'api',
+    transformResponse: (res: BaseResponse) => Response | Partial<BaseResponse> = res => res,
     header: { [x: string]: any } = {},
 ) => {
     return createAsyncThunk<Response | Partial<BaseResponse>, Params, AsyncThunkConfig>(
@@ -62,19 +68,27 @@ const createGetThunk = <Params, Response = unknown>(
             const headers = { ...header, ...(!!token && { token }) };
             const service = domain == 'api' ? api : domainApi;
 
-            //log something before request
+            thunkLogger(type, {
+                url: `${domain == 'api' ? API_URL : DOMAIN_URL}${url}`,
+                params,
+                headers,
+            });
+            showLoading(true); // show loading indicator
             try {
-                const { data } = await service.get(url, { params, headers });
-                //log some data arrival here
-                if (data.status == 'successful') {
-                    return transformResponse(data);
+                const res = await service.get(url, { params, headers });
+                showLoading(false);
+                thunkLogger(type, res, 'response');
+
+                if (res.data.status == 'successful') {
+                    return transformResponse(res.data);
                 }
                 return rejectWithValue({
                     error_code: ERROR_CODE.SERVER_ERR,
-                    error_msg: getErrorMessage(data),
+                    error_msg: getErrorMessage(res.data),
                 });
             } catch (e) {
-                //log some error if happened
+                showLoading(false);
+                thunkLogger(type, e, 'error');
                 return rejectWithValue(e as BaseError);
             }
         },
@@ -105,21 +119,45 @@ const createPostThunk = <TParam, TBody, Response = unknown>(
             const headers = { ...header, ...(!!token && { token }) };
             const service = domain == 'api' ? api : domainApi;
 
+            thunkLogger(type, {
+                url: `${domain == 'api' ? API_URL : DOMAIN_URL}${url}`,
+                params,
+                headers,
+                body,
+            });
             showLoading(true);
             try {
-                const { data } = await service.post(url, body, { params, headers });
+                const res = await service.post(url, body, { params, headers });
                 showLoading(false);
-                if (data.status == 'successful') return transformResponse(data);
+                thunkLogger(type, res, 'response');
+
+                if (res.data.status == 'successful') return transformResponse(res.data);
                 return rejectWithValue({
                     error_code: ERROR_CODE.SERVER_ERR,
-                    error_msg: getErrorMessage(data),
+                    error_msg: getErrorMessage(res.data),
                 });
             } catch (e) {
                 showLoading(false);
+                thunkLogger(type, e, 'error');
                 return rejectWithValue(e as BaseError);
             }
         },
     );
+};
+
+/**
+ * Only logging if action name is specified in SERVICE_DEBUG array
+ * @param action_name
+ * @param log
+ * @param type
+ */
+const thunkLogger = (action_name: string, log: any, type: 'request' | 'response' | 'error' = 'request') => {
+    if (!!SERVICE_DEBUG.find(item => action_name.includes(item))) {
+        console.group(`${type.toUpperCase()}:`, action_name);
+        console.log(log);
+        console.groupEnd();
+        //other logging 3rd party go here
+    }
 };
 
 export { createPostThunk, createGetThunk };

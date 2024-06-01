@@ -28,11 +28,11 @@ const auth = createSlice({
     },
     extraReducers: builder => {
         builder.addCase(userLogin.pending, state => {
-            state.error_msg = '';
             state.isLogging = true;
         });
         builder.addCase(userLogin.fulfilled, (state, action) => {
             const { access_token, user } = action.payload;
+            state.error_msg = '';
             state.isLogging = false;
             state.accessToken = access_token;
             state.userInfo = user;

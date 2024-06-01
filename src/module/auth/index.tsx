@@ -2,7 +2,7 @@ import { TextSemiBold } from '@components/text';
 import { useAppDispatch, useAppSelector } from '@store/hook';
 import React from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { userLogin } from './service';
+import { getProductsFilterBy, userLogin } from './service';
 import auth from './reducer';
 import { Icon } from '@rneui/base';
 import { goBack } from '@navigation/service';
@@ -38,6 +38,22 @@ const LoginScreen = () => {
 
     const handleLogin = !logged ? loginAction : logoutAction;
 
+    const testGetProduct = async () => {
+        const productFilterArgs = {
+            event_id: 43,
+            page_size: 40,
+            page_type: 'category',
+        };
+
+        try {
+            const res = await dispatch(getProductsFilterBy(productFilterArgs)).unwrap();
+
+            showMessage('Get products success');
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
     return (
         <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', paddingTop: insets.top / 1.5 }}>
             {/* <LoadingSpinner /> */}
@@ -56,6 +72,10 @@ const LoginScreen = () => {
 
                 {!!error_msg && <TextSemiBold style={styles.errorText}>{error_msg}</TextSemiBold>}
                 {userInfo && <TextSemiBold style={styles.userText}>{userInfo?.full_name}</TextSemiBold>}
+
+                <Pressable style={styles.buttonLogin} onPress={testGetProduct}>
+                    <TextSemiBold style={{ fontSize: 20, color: 'white' }}>{'Fetch products'}</TextSemiBold>
+                </Pressable>
             </View>
         </View>
     );

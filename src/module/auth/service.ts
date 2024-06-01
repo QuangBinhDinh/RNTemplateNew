@@ -1,9 +1,5 @@
-import { BaseError } from '@api/axios';
-import { Dispatch, createAsyncThunk } from '@reduxjs/toolkit';
 import { createGetThunk, createPostThunk } from '@store/asyncThunk';
-import { RootState } from '@store/store';
 import { User } from '@type/common';
-import axios from 'axios';
 
 export interface LoginArgs {
     email: string;
@@ -18,6 +14,29 @@ export interface LoginResponse {
     user: User;
 }
 
+export interface ProductFilterArgs {
+    id: string | number;
+    category_id: string | number;
+    category_slug: string;
+    q: string;
+    tag_id: number;
+    page_size: number;
+    page_id: number;
+    minPrice: string | number;
+    maxPrice: string | number;
+    order: string;
+    color_variant_id: number;
+    size_variant_id: number;
+    type_variant_id: number;
+    user_id: number;
+    event_id: number;
+}
+
+export interface ProductResultResponse {
+    result: any[];
+    categories: any[];
+}
+
 const userLogin = createPostThunk<unknown, LoginArgs, LoginResponse>(
     'auth/login',
     'user/stateless-sign-in',
@@ -28,18 +47,14 @@ const userLogin = createPostThunk<unknown, LoginArgs, LoginResponse>(
     }),
 );
 
-export { userLogin };
+const getProductsFilterBy = createGetThunk<Partial<ProductFilterArgs>, ProductResultResponse>(
+    'products/filter',
+    'mobile/product/category-filter',
+    'domainApi',
+    res => ({
+        result: res.res,
+        categories: res.categories,
+    }),
+);
 
-const obj = {
-    email: 'test@printerval.com',
-    password: '123456',
-    deviceId: '8585f2885fc92dd2',
-    fcm_token:
-        'fHWndeQBTmeYrolB9H9HHy:APA91bF0iUckgXQTZSO9BTT2eGCDDyZLpK21HPPrfp2qub_NXeviCUiSvuVcb0An80rrx-jQC2shZpoun1IamICbc14fDY2JGP6aGuxV40BPpCX-sW5yIsfMBUb6Eclk_JVaUK0MbGiw',
-    customerToken: '8585f2885fc92dd2-1717121847898',
-};
-
-const header = {
-    'User-Agent': 'PrintervalApp/android/1.6.12',
-    token: '3d2e2ab6dc4c08f1483120fe481822f1',
-};
+export { userLogin, getProductsFilterBy };
